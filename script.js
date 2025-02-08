@@ -3,6 +3,7 @@ const accountBalance = document.getElementById('accountBalance');
 const riskPercentage = document.getElementById('riskPercentage');
 const entryPrice = document.getElementById('entryPrice');
 const stopLoss = document.getElementById('stopLoss');
+const riskUsd = document.getElementById('riskUsd');
 
 // Get result elements
 const riskAmountElement = document.getElementById('riskAmount');
@@ -56,19 +57,25 @@ function validateInput(input) {
 function calculateRisk() {
     const balance = parseFloat(accountBalance.value) || 0;
     const risk = parseFloat(riskPercentage.value) || 0;
+    const riskUsdValue = parseFloat(riskUsd.value) || 0;
     const entry = parseFloat(entryPrice.value) || 0;
     const stop = parseFloat(stopLoss.value) || 0;
 
-    // Calculate risk amount
+    // Calculate risk amount from percentage
     const riskAmount = (balance * risk) / 100;
-
-    // Calculate position size
+    
+    // Update risk USD input when percentage changes
+    if (!riskUsd.matches(':focus')) {
+        riskUsd.value = riskAmount.toFixed(2);
+    }
+    
+    // Calculate position size using risk USD
     let positionSize = 0;
     if (entry !== stop) {
-        positionSize = riskAmount / Math.abs(entry - stop);
+        positionSize = riskUsdValue / Math.abs(entry - stop);
     }
 
-    // Update display with formatted numbers
+    // Update display
     riskAmountElement.textContent = `${riskAmount.toFixed(2)} USDT`;
     positionSizeElement.textContent = `${positionSize.toFixed(4)} Units`;
 }
