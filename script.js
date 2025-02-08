@@ -9,6 +9,9 @@ const riskUsd = document.getElementById('riskUsd');
 const riskAmountElement = document.getElementById('riskAmount');
 const positionSizeElement = document.getElementById('positionSize');
 
+// Add this variable at the top
+let isRiskUsdManual = false;
+
 // Function to validate number input
 function isNumberKey(evt) {
     const charCode = (evt.which) ? evt.which : evt.keyCode;
@@ -68,8 +71,8 @@ function calculateRisk() {
         // Calculate risk amount from percentage
         const riskAmount = (balance * risk) / 100;
         
-        // Update risk USD input when percentage changes
-        if (!riskUsd.matches(':focus')) {
+        // Only auto-update risk USD if not manually set
+        if (!isRiskUsdManual && !riskUsd.matches(':focus')) {
             riskUsd.value = riskAmount.toFixed(2);
         }
         
@@ -202,4 +205,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+});
+
+// Add this event listener for riskUsd input
+riskUsd.addEventListener('input', () => {
+    isRiskUsdManual = true;
+});
+
+// Add these to reset the manual flag when percentage or balance changes
+accountBalance.addEventListener('input', () => {
+    isRiskUsdManual = false;
+});
+
+riskPercentage.addEventListener('input', () => {
+    isRiskUsdManual = false;
 }); 
