@@ -205,15 +205,74 @@ input::placeholder {
     }
 }
 
+/* Mobile-first optimizations */
 @media screen and (max-width: 480px) {
-    .container {
-        max-width: 100%;
-        padding: 0 0.5rem;
+    .calculator {
+        padding: 1rem;
+        margin: 0.5rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .calculator-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .input-group {
+        margin-bottom: 0.8rem;
     }
 
     input {
-        font-size: 16px; /* Prevents zoom on mobile */
+        padding: 0.7rem;
+        font-size: 16px; /* Prevents zoom on iOS */
+        -webkit-appearance: none; /* Removes default iOS styling */
+        appearance: none;
+        border-radius: 6px;
     }
+
+    .result-item {
+        padding: 0.7rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Improve touch targets */
+    label, input, button {
+        min-height: 44px; /* iOS minimum touch target size */
+    }
+
+    /* Prevent horizontal scroll */
+    .container {
+        max-width: 100%;
+        padding: 0 0.8rem;
+        overflow-x: hidden;
+    }
+
+    /* Better spacing for mobile */
+    .results {
+        margin-top: 1rem;
+        padding-top: 1rem;
+    }
+
+    /* Improve readability on mobile */
+    .result-item span:last-child {
+        font-size: 1rem;
+    }
+}
+
+/* Add smooth momentum scrolling for iOS */
+@supports (-webkit-overflow-scrolling: touch) {
+    body {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Prevent pull-to-refresh on mobile */
+html, body {
+    overscroll-behavior-y: contain;
 }
 
 /* Responsive hover effects */
