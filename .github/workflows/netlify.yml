@@ -1,3 +1,4 @@
+# Changes will be tagged with yaml:.github/workflows/netlify.yml
 name: Deploy to Netlify
 on:
   push:
