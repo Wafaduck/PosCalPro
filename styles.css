@@ -79,6 +79,8 @@ body::after {
     margin: 2rem auto;
     padding: 0 1rem;
     position: relative;
+    min-height: 100vh;
+    overflow-y: auto;
 }
 
 h1 {
@@ -268,11 +270,6 @@ input::placeholder {
     body {
         -webkit-overflow-scrolling: touch;
     }
-}
-
-/* Prevent pull-to-refresh on mobile */
-html, body {
-    overscroll-behavior-y: contain;
 }
 
 /* Responsive hover effects */

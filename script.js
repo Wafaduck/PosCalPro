@@ -170,16 +170,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const now = (new Date()).getTime();
         if (now - lastTouchEnd <= 300) {
             event.preventDefault();
+            // Allow click events to still work
+            const target = event.target;
+            if (target.tagName === 'INPUT') {
+                target.focus();
+            }
         }
         lastTouchEnd = now;
     }, false);
 
     // Prevent pull-to-refresh
     document.body.addEventListener('touchmove', function(event) {
-        if (window.pageYOffset === 0) {
+        // Only prevent if at top and scrolling down
+        if (window.pageYOffset === 0 && event.touches[0].clientY > 50) {
             event.preventDefault();
         }
-    }, { passive: false });
+    }, { passive: true });
 
     // Better input handling for mobile
     const inputs = document.querySelectorAll('input[type="number"]');
