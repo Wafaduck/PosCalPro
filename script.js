@@ -76,4 +76,74 @@ function calculateRisk() {
 // Add event listeners to all inputs
 [accountBalance, riskPercentage, entryPrice, stopLoss].forEach(input => {
     input.addEventListener('input', calculateRisk);
-}); 
+});
+
+// Add these calculations to your existing code
+function calculateAdditionalMetrics() {
+    // Calculate R/R (Risk/Reward) Ratio
+    const riskRewardRatio = Math.abs((targetPrice - entryPrice) / (entryPrice - stopLoss));
+    
+    // Calculate potential profit/loss
+    const potentialProfit = positionSize * (targetPrice - entryPrice);
+    const potentialLoss = positionSize * Math.abs(entryPrice - stopLoss);
+}
+
+// Save calculations to local storage
+function saveToLocalStorage() {
+    const data = {
+        accountBalance: accountBalance.value,
+        riskPercentage: riskPercentage.value,
+        entryPrice: entryPrice.value,
+        stopLoss: stopLoss.value
+    };
+    localStorage.setItem('calculatorData', JSON.stringify(data));
+}
+
+// Load saved calculations
+function loadFromLocalStorage() {
+    const saved = localStorage.getItem('calculatorData');
+    if (saved) {
+        const data = JSON.parse(saved);
+        accountBalance.value = data.accountBalance || '';
+        riskPercentage.value = data.riskPercentage || '';
+        entryPrice.value = data.entryPrice || '';
+        stopLoss.value = data.stopLoss || '';
+        calculateRisk();
+    }
+}
+
+function exportCalculation() {
+    const data = {
+        accountBalance: accountBalance.value,
+        riskPercentage: riskPercentage.value,
+        entryPrice: entryPrice.value,
+        stopLoss: stopLoss.value,
+        riskAmount: riskAmountElement.textContent,
+        positionSize: positionSizeElement.textContent
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'position-calculation.json';
+    a.click();
+}
+
+// Add swipe gestures for mobile
+let touchstartX = 0;
+let touchendX = 0;
+
+document.addEventListener('touchstart', e => {
+    touchstartX = e.changedTouches[0].screenX;
+});
+
+document.addEventListener('touchend', e => {
+    touchendX = e.changedTouches[0].screenX;
+    handleGesture();
+});
+
+function handleGesture() {
+    if (touchendX < touchstartX) showAdditionalInfo();
+    if (touchendX > touchstartX) hideAdditionalInfo();
+} 
