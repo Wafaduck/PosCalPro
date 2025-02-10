@@ -89,13 +89,13 @@ function calculateRisk() {
         // Calculate position size using risk USD
         let positionSize = 0;
         if (entry !== stop) {
-            positionSize = riskUsdValue / Math.abs(entry - stop);
+            positionSize = Math.ceil(riskUsdValue / Math.abs(entry - stop));
         }
 
         // Use requestAnimationFrame for smooth updates
         requestAnimationFrame(() => {
             riskAmountElement.textContent = `${riskAmount.toFixed(2)} USDT`;
-            positionSizeElement.textContent = `${positionSize.toFixed(4)} Units`;
+            positionSizeElement.textContent = `${positionSize.toLocaleString()} Units`;
         });
     }, 100);
 }
