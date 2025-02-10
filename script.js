@@ -34,34 +34,28 @@ function isNumberKey(evt) {
 
 // Function to validate input values
 function validateInput(input) {
-    // Allow paste event to complete first
+    const cursorPosition = input.selectionStart;
+    
     setTimeout(() => {
-        // Remove any non-numeric characters except decimal point
-        input.value = input.value.replace(/[^0-9.]/g, '');
-        
-        // Ensure only one decimal point
-        const decimalCount = (input.value.match(/\./g) || []).length;
-        if (decimalCount > 1) {
-            input.value = input.value.replace(/\.+$/, '');
+        const originalValue = input.value;
+        let newValue = originalValue
+            .replace(/[^0-9.]/g, '')
+            .replace(/(\..*)\./g, '$1');
+
+        if (originalValue.endsWith('.') && !newValue.endsWith('.')) {
+            newValue += '.';
         }
 
-        // Apply specific validation rules
-        switch(input.id) {
-            case 'riskPercentage':
-                if (parseFloat(input.value) > 100) {
-                    input.value = '100';
-                }
-                break;
-            case 'accountBalance':
-            case 'entryPrice':
-            case 'stopLoss':
-            case 'riskUsd':
-                if (parseFloat(input.value) < 0) {
-                    input.value = '0';
-                }
-                break;
+        if (newValue !== input.value) {
+            input.value = newValue;
+            const decimalIndex = originalValue.indexOf('.');
+            if (decimalIndex !== -1 && input.value.indexOf('.') === -1) {
+                input.setSelectionRange(cursorPosition - 1, cursorPosition - 1);
+            } else {
+                input.setSelectionRange(cursorPosition, cursorPosition);
+            }
         }
-        
+
         calculateRisk();
     }, 0);
 }
@@ -91,11 +85,11 @@ function calculateRisk() {
         if (entry !== stop) {
             positionSize = Math.ceil(riskUsdValue / Math.abs(entry - stop));
         }
+        positionSizeElement.textContent = `${positionSize.toLocaleString()} Units`; // Whole number
 
         // Use requestAnimationFrame for smooth updates
         requestAnimationFrame(() => {
             riskAmountElement.textContent = `${riskAmount.toFixed(2)} USDT`;
-            positionSizeElement.textContent = `${positionSize.toLocaleString()} Units`;
         });
     }, 100);
 }
@@ -245,18 +239,14 @@ riskPercentage.addEventListener('input', () => {
 
 // Update the handleKeyDown function
 function handleKeyDown(evt) {
-    // Allow all control keys
     if (evt.ctrlKey || evt.metaKey) return true;
     
-    // Allow navigation keys
-    const allowedKeys = [8, 9, 13, 16, 17, 18, 27, 37, 38, 39, 40, 46];
+    const allowedKeys = [8, 9, 13, 16, 17, 18, 27, 37, 38, 39, 40, 46, 190];
     if (allowedKeys.includes(evt.keyCode)) return true;
     
-    // Allow decimal point only once
-    if (evt.key === '.') {
+    if (evt.key === '.' || evt.keyCode === 190) {
         return !evt.target.value.includes('.');
     }
     
-    // Allow numbers
     return /^\d$/.test(evt.key);
 } 
