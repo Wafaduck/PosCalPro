@@ -24,7 +24,7 @@
                                placeholder="Enter account balance"
                                min="0"
                                step="0.01"
-                               onkeypress="return isNumberKey(event)"
+                               onkeydown="return handleKeyDown(event)"
                                oninput="validateInput(this)">
                     </div>
                     <div class="input-group">
@@ -35,7 +35,7 @@
                                min="0"
                                max="100"
                                step="0.1"
-                               onkeypress="return isNumberKey(event)"
+                               onkeydown="return handleKeyDown(event)"
                                oninput="validateInput(this)">
                     </div>
                     <div class="results">
@@ -55,7 +55,7 @@
                                placeholder="Enter risk amount"
                                min="0"
                                step="0.01"
-                               onkeypress="return isNumberKey(event)"
+                               onkeydown="return handleKeyDown(event)"
                                oninput="validateInput(this)">
                     </div>
                     <div class="input-group">
@@ -65,7 +65,7 @@
                                placeholder="Enter entry price"
                                min="0"
                                step="0.0001"
-                               onkeypress="return isNumberKey(event)"
+                               onkeydown="return handleKeyDown(event)"
                                oninput="validateInput(this)">
                     </div>
                     <div class="input-group">
@@ -75,7 +75,7 @@
                                placeholder="Enter stop loss price"
                                min="0"
                                step="0.0001"
-                               onkeypress="return isNumberKey(event)"
+                               onkeydown="return handleKeyDown(event)"
                                oninput="validateInput(this)">
                     </div>
                     <div class="results">

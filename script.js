@@ -34,26 +34,36 @@ function isNumberKey(evt) {
 
 // Function to validate input values
 function validateInput(input) {
-    // Ensure value is numeric
-    let value = parseFloat(input.value) || 0;
-    
-    // Apply specific validation rules
-    switch(input.id) {
-        case 'riskPercentage':
-            if (value > 100) {
-                input.value = 100;
-            }
-            break;
-        case 'accountBalance':
-        case 'entryPrice':
-        case 'stopLoss':
-            if (value < 0) {
-                input.value = 0;
-            }
-            break;
-    }
-    
-    calculateRisk();
+    // Allow paste event to complete first
+    setTimeout(() => {
+        // Remove any non-numeric characters except decimal point
+        input.value = input.value.replace(/[^0-9.]/g, '');
+        
+        // Ensure only one decimal point
+        const decimalCount = (input.value.match(/\./g) || []).length;
+        if (decimalCount > 1) {
+            input.value = input.value.replace(/\.+$/, '');
+        }
+
+        // Apply specific validation rules
+        switch(input.id) {
+            case 'riskPercentage':
+                if (parseFloat(input.value) > 100) {
+                    input.value = '100';
+                }
+                break;
+            case 'accountBalance':
+            case 'entryPrice':
+            case 'stopLoss':
+            case 'riskUsd':
+                if (parseFloat(input.value) < 0) {
+                    input.value = '0';
+                }
+                break;
+        }
+        
+        calculateRisk();
+    }, 0);
 }
 
 // Function to calculate risk and position size
@@ -90,9 +100,21 @@ function calculateRisk() {
     }, 100);
 }
 
-// Add event listeners to all inputs
-[accountBalance, riskPercentage, entryPrice, stopLoss].forEach(input => {
-    input.addEventListener('input', calculateRisk);
+// Update all input event listeners to use 'input' instead of 'keypress'
+[accountBalance, riskPercentage, entryPrice, stopLoss, riskUsd].forEach(input => {
+    input.addEventListener('input', function(e) {
+        validateInput(e.target);
+    });
+});
+
+// Add paste event listeners
+[accountBalance, riskPercentage, entryPrice, stopLoss, riskUsd].forEach(input => {
+    input.addEventListener('paste', function(e) {
+        // Allow the paste to complete first
+        setTimeout(() => {
+            validateInput(e.target);
+        }, 0);
+    });
 });
 
 // Add these calculations to your existing code
@@ -219,4 +241,22 @@ accountBalance.addEventListener('input', () => {
 
 riskPercentage.addEventListener('input', () => {
     isRiskUsdManual = false;
-}); 
+});
+
+// Update the handleKeyDown function
+function handleKeyDown(evt) {
+    // Allow all control keys
+    if (evt.ctrlKey || evt.metaKey) return true;
+    
+    // Allow navigation keys
+    const allowedKeys = [8, 9, 13, 16, 17, 18, 27, 37, 38, 39, 40, 46];
+    if (allowedKeys.includes(evt.keyCode)) return true;
+    
+    // Allow decimal point only once
+    if (evt.key === '.') {
+        return !evt.target.value.includes('.');
+    }
+    
+    // Allow numbers
+    return /^\d$/.test(evt.key);
+} 
